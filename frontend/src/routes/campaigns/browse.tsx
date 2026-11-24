@@ -128,7 +128,7 @@ function RouteComponent() {
   })
   
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto px-4 py-10">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Crowdfunding Campaigns</h1>
         <Link to='/campaigns/create'>
@@ -147,18 +147,16 @@ function RouteComponent() {
           return (
             <Link reloadDocument to={`/campaigns/${campaign.id}`} key={campaign.id} className="h-full">
               <Card key={campaign.id} className="flex flex-col h-full">
-                <img src={campaign.headerImage} alt={campaign.title} className="h-48 w-full object-cover rounded-t-lg" />
+                <div className="relative">
+                  <img src={campaign.headerImage} alt={campaign.title} className="h-48 w-full object-cover rounded-t-lg" />
+                  {campaign.category && <Badge className='absolute top-3 right-3'>{campaign.category}</Badge>}
+                </div>
                 <CardHeader>
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="min-w-0">
-                      {/* two lines reserved so every card's progress bar lines up */}
-                      <CardTitle className="text-xl line-clamp-2 min-h-[3.5rem]" title={campaign.title}>{campaign.title}</CardTitle>
-                      <CardDescription className="text-sm text-muted-foreground mt-1">
-                        by {campaign.user.username}
-                      </CardDescription>
-                    </div>
-                    {campaign.category && <Badge className='mt-1 shrink-0'>{campaign.category}</Badge>}
-                  </div>
+                  {/* two lines reserved so every card's progress bar lines up */}
+                  <CardTitle className="text-xl line-clamp-2 min-h-[3.5rem]" title={campaign.title}>{campaign.title}</CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground mt-1">
+                    by {campaign.user.username}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <Progress value={(campaign.current / campaign.goal) * 100} className="mb-2" />
@@ -167,7 +165,7 @@ function RouteComponent() {
                     <span>{((campaign.current / campaign.goal) * 100).toFixed(0)}%</span>
                   </div>
                 </CardContent>
-                <CardFooter className="flex justify-between items-center">
+                <CardFooter className="flex flex-wrap justify-between items-center gap-2">
                   <div className="flex items-center space-x-2 text-sm text-muted-foreground whitespace-nowrap">
                     <span>{campaign.totalDonors} backers</span>
                     <span>•</span>
