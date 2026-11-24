@@ -101,8 +101,14 @@ function RouteComponent() {
               }
             </div>
             <div>
-              <UpdateCard user={campaign.user} update={campaign.updates[0] || undefined} />
-              <ViewAllUpdates user={campaign.user} campaignId={campaignId} />
+              {campaign.updates[0] ? (
+                <>
+                  <UpdateCard user={campaign.user} update={campaign.updates[0]} />
+                  <ViewAllUpdates user={campaign.user} campaignId={campaignId} />
+                </>
+              ) : (
+                <p className='text-muted-foreground'>No updates yet</p>
+              )}
             </div>
           </div>
         </div>

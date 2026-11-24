@@ -22,42 +22,62 @@ const campaigns = [
     title: 'Medicine and adult diapers for 40 lolas in San Jose Patag',
     body: 'A small home for elderly women in San Jose Patag cares for 40 lolas, most of them without family to visit. Donations run out fast for maintenance medicine, adult diapers and vitamins. Your help covers three months of supplies.',
     gifts: [5000, 1000, 2500, 500, 10000, 1500, 750, 3000],
-    updates: ['The first batch of maintenance medicine arrived this week. Salamat po!'],
+    updates: [
+      { daysAgo: 40, message: 'We met with the caretakers and listed every lola\'s maintenance medicine. The list is longer than we expected, so thank you for sharing this campaign.' },
+      { daysAgo: 18, message: 'The first batch of maintenance medicine arrived this week. Salamat po!' },
+      { daysAgo: 3, message: 'Adult diapers and vitamins for the next month are delivered. Lola Cora asked us to say thank you to everyone who donated.' },
+    ],
   },
   {
     owner: 1, category: CampaignCategory.EDUCATION, goal: 30000, days: 30, image: 'school-supplies',
     title: 'School supplies for 30 kids at a children\'s home in Lalakhan',
     body: 'Thirty kids at a children\'s home in Lalakhan start the school year with hand-me-down notebooks and broken pencils. Each kit has notebooks, pens, crayons, a ruler and a bag.',
     gifts: [2000, 500, 1000, 1000, 300],
-    updates: ['We bought the first 12 kits from a school supply store in the Poblacion.'],
+    updates: [
+      { daysAgo: 25, message: 'We bought the first 12 kits from a school supply store in the Poblacion.' },
+      { daysAgo: 6, message: 'The kids picked their own bag colors today. 18 more kits to go before the school year starts.' },
+    ],
   },
   {
     owner: 0, category: CampaignCategory.MEDICAL, goal: 60000, days: 60, image: 'wheelchairs',
     title: 'Wheelchairs for seniors and PWDs in Pulong Buhangin',
     body: 'A community care center in Pulong Buhangin shares two old wheelchairs among its seniors and persons with disabilities. Six new wheelchairs would let them join therapy sessions and Sunday mass.',
     gifts: [800, 1200, 500, 2000, 400, 600],
-    updates: [],
+    updates: [
+      { daysAgo: 30, message: 'A medical supply store agreed to sell us six wheelchairs at a discount.' },
+      { daysAgo: 9, message: 'We reached enough for the first wheelchair. Mang Ben will be the first to use it at therapy next week.' },
+    ],
   },
   {
     owner: 0, category: CampaignCategory.DISASTER, goal: 100000, days: 20, image: 'typhoon-relief',
     title: 'Relief packs for typhoon-hit families in Caypombo',
     body: 'Floodwater after the last typhoon reached the roofs of some houses in Caypombo. Each relief pack has rice, canned goods, drinking water and a hygiene kit for a family of five.',
     gifts: [1000, 2000, 500, 5000, 1500, 250, 3500],
-    updates: ['First 80 packs handed out at the barangay hall this morning.', 'Second batch is being packed now.'],
+    updates: [
+      { daysAgo: 14, message: 'First 80 packs handed out at the barangay hall this morning.' },
+      { daysAgo: 8, message: 'Second batch is being packed now. Volunteers from the parish youth group joined us.' },
+      { daysAgo: 2, message: '160 families have received packs so far. We are now buying water containers for families still waiting for clean water.' },
+    ],
   },
   {
     owner: 1, category: CampaignCategory.ENVIRONMENT, goal: 25000, days: 90, image: 'river-cleanup',
     title: 'Clean up the Santa Maria River',
     body: 'Trash and water hyacinth clog the river every rainy season and make the floods worse. We are renting a boat and buying gloves, sacks and safety vests for a monthly volunteer clean-up.',
     gifts: [500, 300, 1000],
-    updates: [],
+    updates: [
+      { daysAgo: 20, message: 'We got the barangay\'s go-signal for a clean-up every first Saturday of the month.' },
+      { daysAgo: 4, message: 'First clean-up done: 46 sacks of trash and water hyacinth pulled out near the bridge. Next one is next month.' },
+    ],
   },
   {
     owner: 2, category: CampaignCategory.ANIMALS, goal: 40000, days: 40, image: 'aspin-shelter',
     title: 'Food and shots for rescued aspins in Poblacion',
     body: 'Volunteers in the Poblacion took in 25 stray aspins from the market area. They need food, deworming and anti-rabies shots before they can be adopted.',
     gifts: [],
-    updates: [],
+    updates: [
+      { daysAgo: 12, message: 'A local vet offered free check-ups for all 25 aspins. We still need funds for food and shots.' },
+      { daysAgo: 1, message: 'Three of the puppies were adopted this week. Salamat to the families who took them in!' },
+    ],
   },
 ];
 
@@ -129,7 +149,7 @@ async function main() {
     });
 
     await prisma.update.createMany({
-      data: c.updates.map((message) => ({ postId: campaign.id, message })),
+      data: c.updates.map(({ daysAgo, message }) => ({ postId: campaign.id, message, createdAt: new Date(Date.now() - daysAgo * 86_400_000) })),
     });
   }
 

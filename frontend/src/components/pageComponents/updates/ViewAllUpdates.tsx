@@ -6,7 +6,6 @@ import { userProfile } from "@/types/user"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { format } from "date-fns"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { useAuthContext } from "@/context/AuthContext"
 import UpdateOptions from "./UpdateOptions"
 
@@ -50,7 +49,7 @@ const ViewAllUpdates = ({
                         Updates ({Updates?.length || 0})
                     </DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[800px] ">
+                <div className="max-h-[70vh] overflow-y-auto pr-2">
                     <div>
                         {Updates ? Updates?.map((update) => (
                             <Card key={update.id} className="mb-4 max-w-[500px]">
@@ -83,7 +82,7 @@ const ViewAllUpdates = ({
                         </div>
                         }
                     </div>
-                </ScrollArea>
+                </div>
             </DialogContent>
         </Dialog>
     )
