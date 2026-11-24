@@ -10,7 +10,7 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard/Campaigns')({
   component: () => (
     <ProtectedRoute>
-      <div className="flex overflow-hidden">
+      <div className="flex flex-col lg:flex-row overflow-hidden">
         <DashboardSidebar />
         <div className="flex-1 overflow-auto">
           <main className="p-2 px-5">

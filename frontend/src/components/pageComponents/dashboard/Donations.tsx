@@ -113,9 +113,8 @@ const Donations = ({
                             </TableHead>
                             <TableHead className="text-lg">Campaign</TableHead>
                             <TableHead className="text-lg cursor-pointer">
-                                Date 
+                                Date
                             </TableHead>
-                            <TableHead className="text-lg">Status</TableHead>
                         </TableRow>
                     </TableHeader>
 
@@ -134,13 +133,6 @@ const Donations = ({
                             <TableCell className="text-base">₱{donation.amount.toLocaleString()}</TableCell>
                             <TableCell className="text-base">{donation.post?.title}</TableCell>
                             <TableCell className="text-base">{format(new Date(donation.createdAt), 'yyyy-MM-dd')}</TableCell>
-                            <TableCell className="text-base">
-                            {/* <span className={`px-3 py-1 rounded-full text-sm ${
-                                donation.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                            }`}>
-                                {donation.status}
-                            </span> */}
-                            </TableCell>
                         </TableRow>
                         ))}
                     </TableBody>

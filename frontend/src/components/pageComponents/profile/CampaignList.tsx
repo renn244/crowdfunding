@@ -20,7 +20,7 @@ const CampaignList = ({
     const isOwner = user?.id === id
     return (
         <div>
-            <h2 className="text-2xl font-bold mb-6">My Campaigns</h2>
+            <h2 className="text-2xl font-bold mb-6">{isOwner ? 'My Campaigns' : 'Campaigns'}</h2>
             {campaigns.length !== 0 ? 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                     {campaigns.map((campaign) => {
@@ -28,16 +28,16 @@ const CampaignList = ({
                         const daysLeft = campaign.endDate && differenceInCalendarDays(new Date(campaign?.endDate), new Date())
 
                         return (
-                            <Link reloadDocument to='/campaigns/$campaignId' params={{ campaignId: campaign.id }}>
-                                <Card key={campaign.id} className="relative w-full shadow-lg">
+                            <Link key={campaign.id} reloadDocument to='/campaigns/$campaignId' params={{ campaignId: campaign.id }} className="h-full">
+                                <Card className="relative w-full h-full flex flex-col shadow-lg">
                                     <img
                                     src={campaign.headerImage}
                                     alt={campaign.title}
                                     className="rounded-t-lg"
                                     />
                                     <CardHeader>
-
-                                        <CardTitle className="text-xl">{campaign.title}</CardTitle>
+                                        {/* two lines reserved so the cards line up, like on Browse */}
+                                        <CardTitle className="text-xl line-clamp-2 min-h-[3.5rem]" title={campaign.title}>{campaign.title}</CardTitle>
                                     </CardHeader>
                                     <CardContent className="flex-grow">
                                         {/* <p className="text-sm text-gray-600 mb-4">{campaign.description}</p> */}

@@ -44,7 +44,6 @@ export const DonationsSkeleton = () => (
                             <TableHead className="text-lg cursor-pointer">Amount</TableHead>
                             <TableHead className="text-lg">Campaign</TableHead>
                             <TableHead className="text-lg cursor-pointer">Date</TableHead>
-                            <TableHead className="text-lg">Status</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

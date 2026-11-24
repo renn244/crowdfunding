@@ -62,18 +62,15 @@ const ProfileHeader = ({
                             <MapPin className="h-4 w-4 mr-1" />
                             {location ? location : 'No Location'}
                         </p>
-                        <p className="text-gray-600 mb-4">Passionate fundraiser | Making a difference</p>
-                        {bio ?
-                            <p className="text-sm mb-4">
-                                {bio}
-                            </p>
-                        : null}
+                        <p className="text-sm mb-4">
+                            {bio || 'No bio yet'}
+                        </p>
                         <div className="flex flex-wrap justify-center sm:justify-start gap-6">
                             <div>
                                 <span className="font-semibold text-lg">{stats.campaigns}</span> Campaigns
                             </div>
                             <div>
-                                <span className="font-semibold text-lg">₱{stats.raised}</span> Raised
+                                <span className="font-semibold text-lg">₱{stats.raised.toLocaleString()}</span> Raised
                             </div>
                             <div>
                                 <span className="font-semibold text-lg">{stats.donors}</span> Supporters

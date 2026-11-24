@@ -23,35 +23,38 @@ const NavBar = () => {
     }
 
     return (
-        <header className="flex justify-between px-4 sm:px-8 md:px-14 h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40">
-            <div className="flex h-[60px] items-center border-b px-6 gap-4">
+        <header className="flex justify-between px-4 sm:px-8 md:px-14 h-14 lg:h-[60px] items-center gap-2 sm:gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40">
+            <div className="flex items-center gap-2 sm:gap-4">
                 <Link className="flex items-center gap-2 font-semibold" to="/">
                     <Layers className="h-6 w-6" />
-                    <span className="">CrowdFund</span>
+                    <span className="hidden sm:inline">CrowdFund</span>
                 </Link>
                 <Link to="/campaigns/browse">
-                    <Button variant="outline">
+                    <Button variant="outline" size="sm">
                         Browse
                     </Button>
                 </Link>
-                <Link to="/messages">
-                    <Button variant="outline">
-                        Messages
-                    </Button>
-                </Link>
+                {/* messages need an account, so the link only shows once logged in */}
+                {isLoggedIn() && (
+                    <Link to="/messages">
+                        <Button variant="outline" size="sm">
+                            Messages
+                        </Button>
+                    </Link>
+                )}
             </div>
 
             {!isLoggedIn() && (
-                <div className="space-x-4">
+                <div className="flex items-center gap-2 sm:gap-4">
                   <Link to="/login">
-                    <Button variant="outline">Log in</Button>
+                    <Button variant="outline" size="sm">Log in</Button>
                   </Link>
                   <Link to="/signup">
-                    <Button>Sign up</Button>
+                    <Button size="sm">Sign up</Button>
                   </Link>
                 </div>
             )}
-            {isLoggedIn() && <div className="flex items-center gap-4">
+            {isLoggedIn() && <div className="flex items-center gap-2 sm:gap-4">
                 <Notifications />
                 <Sheet open={isOpenSheet} onOpenChange={setIsOpenSheet}>
                     <SheetTrigger>
@@ -75,25 +78,20 @@ const NavBar = () => {
                                 </SheetDescription>
                             </div>
                         </SheetHeader>
+                        {/* picking a page closes the menu */}
                         <nav className="flex flex-col gap-3 px-4 mt-9 font-semibold text-lg">
-                            <div className="flex justify-start gap-3">
+                            <Link className="flex justify-start gap-3" to='/profile/$userId' params={{ userId: user.id }} onClick={() => setIsOpenSheet(false)}>
                                 <UserRound />
-                                <Link to='/profile/$userId' params={{ userId: user.id }}>
-                                    Profile
-                                </Link>
-                            </div>
-                            <div className="flex justify-start gap-3">
+                                Profile
+                            </Link>
+                            <Link className="flex justify-start gap-3" to="/dashboard/Overview" onClick={() => setIsOpenSheet(false)}>
                                 <Layers />
-                                <Link to="/dashboard/Overview">
-                                    Dashboard
-                                </Link>
-                            </div>
-                            <div className="flex justify-start gap-3">
+                                Dashboard
+                            </Link>
+                            <Link className="flex justify-start gap-3" to={'/settings'} onClick={() => setIsOpenSheet(false)}>
                                 <Settings2 />
-                                <Link to={'/settings'}>
-                                    Settings
-                                </Link>
-                            </div>
+                                Settings
+                            </Link>
                             <div className="flex justify-start gap-3">
                                 <LogOut />
                                 <button onClick={() => Logout()}>
@@ -156,7 +154,7 @@ const Notifications = () => {
                     <span className="sr-only">Toggle notifications</span>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-[600px]">
+            <PopoverContent align="end" collisionPadding={16} className="w-[calc(100vw-2rem)] max-w-[600px]">
                 <header className="flex justify-between items-center">
                     <h2 className="text-lg font-bold">
                         Notifications
@@ -169,7 +167,7 @@ const Notifications = () => {
                     {
                         isLoading ? 
                         <LoadingSpinner /> :
-                        notifications?.length !== 0 ?
+                        notifications?.notifications?.length ?
                             notifications?.notifications?.map((notification: any) => (
                                 <NotificationCard key={notification.id} size="sm" notification={notification} />
                             ))

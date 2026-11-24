@@ -99,7 +99,7 @@ const OverviewSkeleton = () => {
                                 Recent Donations
                             </CardTitle>
                             <CardDescription>
-                                This is your recent donations that you have not seen yet.
+                                The latest 10 donations to your campaigns.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="px-6 pb-3">

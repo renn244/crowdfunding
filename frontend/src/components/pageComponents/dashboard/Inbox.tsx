@@ -69,7 +69,9 @@ const Inbox = () => {
                             </div>
                         )}
                         {!hasNextPage && !isLoading && (
-                            <p className="text-center text-muted-foreground mt-4">No more notifications</p>
+                            <p className="text-center text-muted-foreground mt-4">
+                                {data?.pages.some((page) => page.data?.length) ? 'No more notifications' : 'No notifications yet'}
+                            </p>
                         )}
                         {isFetchingNextPage && <LoadingSpinner className="mt-4" />}
                     </div>

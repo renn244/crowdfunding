@@ -14,18 +14,8 @@ function Index() {
 
   const { isLoggedIn } = useAuthContext();
 
-  const successStories = [
-    {
-      image: '/successStories/The-Giving-Pledge.png',
-      title: 'The Giving Pledge',
-      description: 'The Giving Pledge is a commitment by the world\'s wealthiest individuals and families to dedicate the majority of their wealth to giving back. This campaign encourages the world’s wealthiest individuals to commit at least half of their wealth to philanthropy during their lifetime or in their will. It’s not a traditional fundraiser but an advocacy-driven commitment to giving.'
-    },
-    {
-      image : '/successStories/red-nose-day.avif',
-      title: 'Red Nose Day',
-      description: 'A fundraising campaign by Comic Relief, Red Nose Day uses humor and entertainment to raise money for children and families living in poverty. Celebrities participate in skits and performances to encourage donations. The funds are distributed to charitable organizations worldwide. Over $1 billion globally (since its inception in 1988).'
-    }
-  ]
+  // the stamped demo campaign photos from public/demo
+  const heroPhotos = ['elderly-home', 'school-supplies', 'river-cleanup', 'aspin-shelter']
 
   // the newest real campaigns on the platform
   const { data: featuredCampaigns } = useQuery({
@@ -42,7 +32,7 @@ function Index() {
 
       <main className="flex-grow">
         <section id="Home" className="relative bg-gray-50 overflow-hidden flex items-center">
-          <div className="max-w-7xl mx-auto flex">
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row">
             <div className="relative z-10 pb-8 bg-gray-50 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
               <main className="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
                 <div className="sm:text-center lg:text-left">
@@ -72,11 +62,11 @@ function Index() {
             </div>
             <div className="relative z-10 pb-8 bg-gray-50 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
               <div className='mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28'>
-                <img
-                  className="max-w-[620px] rounded-xl"
-                  src={'/herophoto.webp'}
-                  alt="People helping each other"
-                />
+                <div className="grid grid-cols-2 gap-3 max-w-[620px] mx-auto">
+                  {heroPhotos.map((photo) => (
+                    <img key={photo} className="aspect-video w-full rounded-xl object-cover" src={`/demo/${photo}.jpg`} alt="Demo campaign photo" />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -186,34 +176,11 @@ function Index() {
           </div>
         </section>
 
-        <section id="success-stories" className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Success Stories
-            </h2>
-            <div className="mt-6 grid gap-16 lg:grid-cols-2 lg:gap-x-8 lg:gap-y-12">
-              {successStories.map((item) => (
-                <div key={item.title} className="relative">
-                  <div className="aspect-w-3 aspect-h-2 mb-4">
-                    <div className="w-full h-full bg-gray-200 rounded-lg overflow-hidden border-4 border-indigo-200">
-                      {/* Placeholder for success story image */}
-                      <div className="flex items-center justify-center h-full text-gray-500">
-                        <img className='w-full h-full max-w-[585px] max-h-[290px]' src={item.image} />
-                      </div>
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900">{item.title}</h3>
-                  <p className="mt-2 text-sm text-gray-500">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
 
       <footer className="bg-gray-800">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-          <nav className="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
+          <nav className="-mx-4 sm:-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
             <div className="px-5 py-2">
               <a href="#About" className="text-base text-gray-400 hover:text-white">About</a>
             </div>

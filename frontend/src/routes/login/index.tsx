@@ -71,8 +71,8 @@ function RouteComponent() {
   }
 
   return (
-    <div className='height-withNav w-full flex justify-center items-center'>
-      <Card className='min-w-[450px]'>
+    <div className='height-withNav w-full flex justify-center items-center px-4'>
+      <Card className='w-full max-w-[450px]'>
         <form onSubmit={handleSubmit(onSubmit)}>
           
           <CardHeader>

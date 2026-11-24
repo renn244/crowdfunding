@@ -43,23 +43,29 @@ const MessageList = () => {
     }
 
     if(isLoading && !isFetchingNextPage) {
-        return <MessageListSkeleton />   
+        return <MessageListSkeleton />
     }
+
+    const hasConversations = pastConversations?.pages.some((page) => page.data.length)
 
     return (
         <Card>
             <CardContent className="p-4">
                 <MessageSearch initialSearch={search} />
                 <div onScroll={handleScroll} ref={scrollRef} className="space-y-5 h-[calc(100vh-16rem)] overflow-y-scroll custom-scrollbar">
+                    {!hasConversations && (
+                        <p className="pt-8 px-4 text-center text-muted-foreground">
+                            {search ? 'No conversations match your search.' : 'No conversations yet. Open a campaign organizer\'s profile and press Message to start one.'}
+                        </p>
+                    )}
                     {pastConversations?.pages.map((page) => (
                         page.data.map((conversation) => {
                             const person = conversation.participants[0]
                             const isMessageYours = conversation?.messages[0]?.senderId === user.id
                             const isMessageRead = conversation?.messages[0]?.status === 'READ' || !isMessageYours
                             return (
-                                <Link to="/messages" search={{ userId: person.id, conversationId: conversation.id, search: search }}>
+                                <Link key={conversation.id} to="/messages" search={{ userId: person.id, conversationId: conversation.id, search: search }}>
                                     <div
-                                    key={conversation.id}
                                     className={`p-3 mb-3 rounded-lg cursor-pointer hover:bg-gray-100 flex items-center ${
                                     conversation.id === conversationId ? "bg-blue-50" : ""
                                     }`}

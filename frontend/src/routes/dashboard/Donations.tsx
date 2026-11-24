@@ -10,7 +10,7 @@ import { createFileRoute, useSearch } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard/Donations')({
     component: () => (
         <ProtectedRoute>
-            <div className='flex overflow-hidden'>
+            <div className='flex flex-col lg:flex-row overflow-hidden'>
                 <DashboardSidebar />
                 <div className='flex-1 overflow-auto'>
                     {/* <DashboardHeader /> */}

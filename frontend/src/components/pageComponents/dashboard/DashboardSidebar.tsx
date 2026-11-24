@@ -2,32 +2,43 @@ import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import { CreditCard, Home, Inbox, Layers } from "lucide-react"
 
-const linkClass = "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+const linkClass = "flex items-center gap-3 rounded-lg px-3 py-2 whitespace-nowrap text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
 const activeProps = { className: 'text-gray-900 dark:text-gray-50' }
+
+const DashboardLinks = () => (
+    <>
+        <Link activeProps={activeProps} className={linkClass} to="/dashboard/Overview">
+            <Home className="h-4 w-4" />
+            Home
+        </Link>
+        <Link activeProps={activeProps} className={linkClass} to="/dashboard/Campaigns">
+            <Layers className="h-4 w-4" />
+            Campaigns
+        </Link>
+        <Link activeProps={activeProps} className={linkClass} to="/dashboard/Donations" search={{ page: 1, search: '', campaign: '' }}>
+            <CreditCard className="h-4 w-4" />
+            Donations
+        </Link>
+        <Link activeProps={activeProps} className={linkClass} to="/dashboard/Inbox">
+            <Inbox className="h-4 w-4" />
+            Inbox
+        </Link>
+    </>
+)
 
 const DashboardSidebar = () => {
 
     return (
+        <>
+        {/* phones and tablets get a tab row instead of the sidebar */}
+        <nav className="flex overflow-x-auto border-b bg-gray-100/40 px-2 py-1 text-sm font-medium lg:hidden dark:bg-gray-800/40">
+            <DashboardLinks />
+        </nav>
         <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
             <div className="flex h-full flex-col gap-2">
                 <div className="flex-1 overflow-auto py-2">
                 <nav className="grid items-start px-4 text-sm font-medium">
-                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Overview">
-                        <Home className="h-4 w-4" />
-                        Home
-                    </Link>
-                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Campaigns">
-                        <Layers className="h-4 w-4" />
-                        Campaigns
-                    </Link>
-                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Donations" search={{ page: 1, search: '', campaign: '' }}>
-                        <CreditCard className="h-4 w-4" />
-                        Donations
-                    </Link>
-                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Inbox">
-                        <Inbox className="h-4 w-4" />
-                        Inbox
-                    </Link>
+                    <DashboardLinks />
                 </nav>
                 </div>
                 <div className="max-w-[163.3px] mt-auto p-4 space-y-4">
@@ -39,6 +50,7 @@ const DashboardSidebar = () => {
                 </div>
             </div>
         </div>
+        </>
     )
 }
 

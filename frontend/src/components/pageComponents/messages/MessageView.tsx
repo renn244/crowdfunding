@@ -14,16 +14,19 @@ const MessageView = () => {
     const { data: profile, isLoading } = useQuery({
         queryKey: ['profile', userId],
         queryFn: async () => {
-            if(!userId) return
-
             const response = await axiosFetch.get(`/user/getProfile/${userId}`)
             return response.data
         },
+        enabled: !!userId,
         refetchOnWindowFocus: false
     })
 
     if(!userId) {
-        return
+        return (
+            <Card className="hidden md:flex h-[calc(100vh-12rem)] items-center justify-center text-muted-foreground">
+                Pick a conversation to read it here.
+            </Card>
+        )
     }
 
     return (
