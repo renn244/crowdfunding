@@ -6,8 +6,8 @@ const BrowseSkeleton = () => {
 
   return (
     <>
-      {[...Array(6)].map(() => (
-      <Card className="flex flex-col">
+      {[...Array(6)].map((_, index) => (
+      <Card key={index} className="flex flex-col">
         <Skeleton className="h-48 w-full object-cover rounded-t-lg" />
         <CardHeader>
           <div className="flex justify-between items-start">

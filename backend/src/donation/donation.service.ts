@@ -74,7 +74,7 @@ export class DonationService {
         paymentId: paymentId,
         message: '',
         postId: campaignId,
-        userId: userId || '',
+        userId: userId || null,
         // billing Information
         firstName: billingInformation.firstName,
         lastName: billingInformation.lastName,
@@ -308,35 +308,21 @@ export class DonationService {
     }
   }
 
+  // stats for donations made to the user's campaigns
   async getDonationStatistics(userId: string) {
-    const totalDonations = await this.prisma.donation.aggregate({
+    const stats = await this.prisma.donation.aggregate({
       where: {
-        userId: userId,
+        post: { userId: userId },
       },
-      _sum: {
-        amount: true,
-      },
-    });
-
-    const averageDonation = await this.prisma.donation.aggregate({
-      where: {
-        userId: userId,
-      },
-      _avg: {
-        amount: true,
-      },
-    });
-
-    const totalDonors = await this.prisma.donation.count({
-      where: {
-        userId: userId,
-      },
+      _sum: { amount: true },
+      _avg: { amount: true },
+      _count: true,
     });
 
     return {
-      totalDonations: totalDonations._sum.amount,
-      totalDonors: totalDonors,
-      averageDonation: averageDonation._avg.amount,
+      totalDonations: stats._sum.amount ?? 0,
+      totalDonors: stats._count,
+      averageDonation: stats._avg.amount ?? 0,
     };
   }
 
@@ -369,7 +355,7 @@ export class DonationService {
   async getMonthlyDonations(user: RequestUser) {
     const donations = await this.prisma.donation.findMany({
       where: {
-        userId: user.id,
+        post: { userId: user.id },
       },
     });
 

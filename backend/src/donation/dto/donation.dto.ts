@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsIn, IsInt, IsNumber, IsString, Min } from 'class-validator';
 
 export class BillingInformation {
   @IsString()
@@ -7,7 +7,7 @@ export class BillingInformation {
   @IsString()
   lastName: string;
 
-  @IsString()
+  @IsEmail()
   email: string;
 
   @IsString()
@@ -24,10 +24,12 @@ export class BillingInformation {
 }
 
 export class DonationDto extends BillingInformation {
-  @IsNumber()
+  // PayMongo's minimum is 20 pesos
+  @IsInt()
+  @Min(20, { message: 'The minimum donation is ₱20' })
   amount: number;
 
-  @IsString()
+  @IsIn(['card', 'gcash', 'paymaya', 'grab_pay'])
   paymentMethod: string;
 
   @IsString()

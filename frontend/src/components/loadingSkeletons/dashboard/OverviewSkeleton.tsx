@@ -104,8 +104,8 @@ const OverviewSkeleton = () => {
                         </CardHeader>
                         <CardContent className="px-6 pb-3">
                             <div className="space-y-8">
-                                {Array(7).fill(null).map(() => (
-                                    <div className="flex items-center">
+                                {Array(7).fill(null).map((_, index) => (
+                                    <div key={index} className="flex items-center">
                                         <div>
                                             <Skeleton className="h-9 w-9 rounded-full" />
                                         </div>

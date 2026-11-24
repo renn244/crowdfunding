@@ -33,10 +33,10 @@ const Campaigns = ({
                             <CardDescription>
                                 Campaign Progress <Badge className="ml-5">{campaign.status}</Badge>
                             </CardDescription>
-                            <Progress value={(campaign.raised / campaign.goal) * 100} />
+                            <Progress value={(campaign.current / campaign.goal) * 100} />
                             <div className="flex justify-between text-sm text-muted-foreground">
-                                <span>{"$" + campaign.current + " raised"}</span>
-                                <span>{"$" + campaign.goal + " goal"}</span>
+                                <span>₱{campaign.current.toLocaleString()} raised</span>
+                                <span>₱{campaign.goal.toLocaleString()} goal</span>
                             </div>
                         </div>
                     </CardContent>

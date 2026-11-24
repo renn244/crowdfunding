@@ -56,10 +56,7 @@ const Overview = ({
                         </svg>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${data?.totalDonations}</div>
-                        <p className="text-xs text-muted-foreground">
-                        +20.1% from last month
-                        </p>
+                        <div className="text-2xl font-bold">₱{data.totalDonations.toLocaleString()}</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -71,9 +68,6 @@ const Overview = ({
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{data?.activeCampaignscount}</div>
-                        <p className="text-xs text-muted-foreground">
-                        +2 new this month
-                        </p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -83,9 +77,6 @@ const Overview = ({
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{data?.totalDonors}</div>
-                        <p className="text-xs text-muted-foreground">
-                        +19% from last month
-                        </p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -96,10 +87,7 @@ const Overview = ({
                         <CreditCard className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">${data.averageDonation?.toFixed(2)}</div>
-                        <p className="text-xs text-muted-foreground">
-                        +5.2% from last month
-                        </p>
+                        <div className="text-2xl font-bold">₱{data.averageDonation.toFixed(2)}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -113,7 +101,7 @@ const Overview = ({
                             <ResponsiveContainer width="100%" height={350}>
                                 <BarChart accessibilityLayer data={data?.monthlyDonationsStats}>
                                     <XAxis dataKey="month" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `$${value}`} />
+                                    <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₱${value}`} />
                                     <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dashed" />} />
                                     <Bar dataKey="amount" fill="#adfa1d" radius={[4, 4, 0, 0]} />
                                 </BarChart>
@@ -145,7 +133,7 @@ const Overview = ({
                                         {donation.user?.email || 'No Email'}
                                         </p>
                                     </div>
-                                        <div className="ml-auto font-medium">${donation.amount}</div>
+                                        <div className="ml-auto font-medium">₱{donation.amount}</div>
                                     </div>
                                 ))}
                             </div>

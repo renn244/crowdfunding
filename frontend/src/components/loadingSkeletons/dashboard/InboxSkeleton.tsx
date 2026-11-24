@@ -4,8 +4,8 @@ import { MoreHorizontal } from "lucide-react"
 const InboxSkeleton = () => (
     <div className="h-[715px] pr-4 overflow-y-auto custom-scrollbar">
         <div className="space-y-8">
-            {Array.from({ length: 10 }).map(() => (
-                <div className="flex items-center">
+            {Array.from({ length: 10 }).map((_, index) => (
+                <div key={index} className="flex items-center">
                     <div className="flex-shrink-0 mr-3">
                         <div className="bg-transparent" />
                     </div>

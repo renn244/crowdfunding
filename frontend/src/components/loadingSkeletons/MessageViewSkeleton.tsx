@@ -27,8 +27,8 @@ export const MessageDisplaySkeleton = () => {
     return (
         <div className="h-[580px] overflow-y-scroll space-y-4 custom-scrollbar py-3">
             {
-                [true, false, true, false, true, true, false].reverse().map((isSender) => (
-                    <div className={`flex ${isSender? "justify-end" : "justify-start"}`}>
+                [true, false, true, false, true, true, false].reverse().map((isSender, index) => (
+                    <div key={index} className={`flex ${isSender? "justify-end" : "justify-start"}`}>
                         <div className={`flex ${isSender ? "flex-row-reverse" : "flex-row"} items-end`} >
                             <Skeleton className="h-8 w-8 mx-2 rounded-full" />
                             <Skeleton className="w-[300px] h-16 p-3 rounded-lg" />

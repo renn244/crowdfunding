@@ -23,6 +23,10 @@ export class CampaignService {
     user: RequestUser,
     file: Express.Multer.File,
   ) {
+    if (!file) {
+      throw new BadRequestException('Header image is required');
+    }
+
     try {
       const userId = user?.id;
 
@@ -83,8 +87,11 @@ export class CampaignService {
           contains: searchQuery.search,
           mode: 'insensitive',
         },
-        category: searchQuery.filter ? searchQuery.filter : undefined,
+        category: Object.values(CampaignCategory).includes(searchQuery.filter)
+          ? searchQuery.filter
+          : undefined,
       },
+      orderBy: { createdAt: 'desc' },
       include: {
         user: {
           select: {
@@ -141,10 +148,20 @@ export class CampaignService {
       },
     });
 
+    if (!getCampaign) {
+      throw new NotFoundException('Campaign not found');
+    }
+
     if (getCampaign.userId !== userId) {
       throw new BadRequestException(
         'You are not authorized to update this campaign',
       );
+    }
+
+    // converting goal into a number
+    const goal = body.goal ? parseInt(body.goal, 10) : undefined;
+    if (goal !== undefined && isNaN(goal)) {
+      throw new BadRequestException('Goal must be a valid number');
     }
 
     // uploading a new image and deleting if there i an existing image
@@ -154,14 +171,9 @@ export class CampaignService {
         folder: 'headerImages',
       });
       if (getCampaign.headerImage) {
-        await this.fileUpload.deleteFile(getCampaign.headerImage);
+        // a leftover old image shouldn't block the update
+        await this.fileUpload.deleteFile(getCampaign.headerImage).catch(() => undefined);
       }
-    }
-
-    // converting goal into a number
-    const goal = body.goal ? parseInt(body.goal, 10) : undefined;
-    if (goal && isNaN(goal)) {
-      throw new BadRequestException('Goal must be a valid number');
     }
 
     const campaign = await this.prisma.campaignPost.update({
@@ -188,17 +200,29 @@ export class CampaignService {
       },
     });
 
+    if (!getCampaign) {
+      throw new NotFoundException('Campaign not found');
+    }
+
     if (userId !== getCampaign.userId) {
       throw new BadRequestException(
         'You are not authorized to delete this campaign',
       );
     }
 
-    const deleteCampaign = await this.prisma.campaignPost.delete({
-      where: {
-        id: campaignId,
-      },
+    const donations = await this.prisma.donation.count({
+      where: { postId: campaignId },
     });
+    if (donations > 0) {
+      throw new BadRequestException(
+        'A campaign that already has donations cannot be deleted',
+      );
+    }
+
+    const [, deleteCampaign] = await this.prisma.$transaction([
+      this.prisma.update.deleteMany({ where: { postId: campaignId } }),
+      this.prisma.campaignPost.delete({ where: { id: campaignId } }),
+    ]);
 
     return deleteCampaign;
   }

@@ -48,8 +48,8 @@ export const DonationsSkeleton = () => (
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {Array.from({ length: 10 }).map(() => (
-                            <TableRow>
+                        {Array.from({ length: 10 }).map((_, index) => (
+                            <TableRow key={index}>
                                 <TableCell>
                                     <div className="flex items-center">
                                         <Skeleton className="h-10 w-10 mr-3 rounded-full" />

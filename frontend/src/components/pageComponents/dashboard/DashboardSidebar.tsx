@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
-import { Calendar, CreditCard, Home, Inbox, Layers } from "lucide-react"
+import { CreditCard, Home, Inbox, Layers } from "lucide-react"
+
+const linkClass = "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+const activeProps = { className: 'text-gray-900 dark:text-gray-50' }
 
 const DashboardSidebar = () => {
 
@@ -9,41 +12,21 @@ const DashboardSidebar = () => {
             <div className="flex h-full flex-col gap-2">
                 <div className="flex-1 overflow-auto py-2">
                 <nav className="grid items-start px-4 text-sm font-medium">
-                    <Link
-                    activeProps={{ className: 'text-gray-900 dark:text-gray-50' }}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    href="/dashboard/overview"
-                    >
+                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Overview">
                         <Home className="h-4 w-4" />
                         Home
                     </Link>
-                    <Link
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    href="/dashboard/campaigns"
-                    >
+                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Campaigns">
                         <Layers className="h-4 w-4" />
                         Campaigns
                     </Link>
-                    <Link
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    href="/dashboard/donations"
-                    >
+                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Donations" search={{ page: 1, search: '', campaign: '' }}>
                         <CreditCard className="h-4 w-4" />
                         Donations
                     </Link>
-                    <Link
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    href="/dashboard/inbox"
-                    >
+                    <Link activeProps={activeProps} className={linkClass} to="/dashboard/Inbox">
                         <Inbox className="h-4 w-4" />
                         Inbox
-                    </Link>
-                    <Link
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                    href="/calendar"
-                    >
-                        <Calendar className="h-4 w-4" />
-                        Calendar
                     </Link>
                 </nav>
                 </div>

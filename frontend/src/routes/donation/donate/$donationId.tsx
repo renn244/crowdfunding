@@ -9,7 +9,6 @@ import axiosFetch from '@/lib/axios'
 import { CampaignPost } from '@/types/campaign'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { DollarSign } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -83,8 +82,9 @@ function RouteComponent() {
             } else {
                 window.location.href = response.data.stripeSession.url
             }
-        } catch (error) {
-            toast.error('An error occurred while processing your donation')
+        } catch (error: any) {
+            const message = error.response?.data?.message
+            toast.error((Array.isArray(message) ? message[0] : message) || 'An error occurred while processing your donation')
         } finally {
             setIsLoading(false)
         }
@@ -107,7 +107,7 @@ function RouteComponent() {
                         </CardHeader>
                         <CardContent>
                             <div className="relative">
-                            <DollarSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <span className="absolute left-3 top-2 text-sm text-muted-foreground">₱</span>
                             <Input
                                 type="number"
                                 value={amount}
@@ -128,8 +128,8 @@ function RouteComponent() {
                         <CardContent>
                             <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
                                 <div className="flex items-center space-x-2">
-                                    <RadioGroupItem value="paypal" id="paypal" />
-                                    <Label htmlFor="paypal">PayPal</Label>
+                                    <RadioGroupItem value="grab_pay" id="grab_pay" />
+                                    <Label htmlFor="grab_pay">GrabPay</Label>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="paymaya" id="paymaya" />
@@ -141,7 +141,7 @@ function RouteComponent() {
                                 </div>
                                 <div className="flex items-center space-x-2">
                                     <RadioGroupItem value="card" id="credit-card" />
-                                    <Label htmlFor="card">Card</Label>
+                                    <Label htmlFor="credit-card">Card</Label>
                                 </div>
                             </RadioGroup>
                         </CardContent>
@@ -215,11 +215,11 @@ function RouteComponent() {
                         <h2 className="text-xl font-semibold mb-2">{campaignData.title}</h2>
                         <div className="flex justify-between text-sm text-muted-foreground mb-2">
                             <span>Raised:</span>
-                            <span>${campaignData.current}</span>
+                            <span>₱{campaignData.current.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm text-muted-foreground">
                             <span>Goal:</span>
-                            <span>${campaignData.goal}</span>
+                            <span>₱{campaignData.goal.toLocaleString()}</span>
                         </div>
                         </CardContent>
                     </Card>

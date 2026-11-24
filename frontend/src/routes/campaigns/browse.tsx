@@ -161,7 +161,7 @@ function RouteComponent() {
                 <CardContent className="flex-grow">
                   <Progress value={(campaign.current / campaign.goal) * 100} className="mb-2" />
                   <div className="flex justify-between text-sm font-medium">
-                    <span>${campaign.current.toLocaleString()} raised</span>
+                    <span>₱{campaign.current.toLocaleString()} raised</span>
                     <span>{((campaign.current / campaign.goal) * 100).toFixed(0)}%</span>
                   </div>
                 </CardContent>

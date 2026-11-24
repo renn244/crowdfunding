@@ -73,7 +73,7 @@ const ProfileHeader = ({
                                 <span className="font-semibold text-lg">{stats.campaigns}</span> Campaigns
                             </div>
                             <div>
-                                <span className="font-semibold text-lg">${stats.raised}</span> Raised
+                                <span className="font-semibold text-lg">₱{stats.raised}</span> Raised
                             </div>
                             <div>
                                 <span className="font-semibold text-lg">{stats.donors}</span> Supporters

@@ -25,7 +25,7 @@ const NavBar = () => {
     return (
         <header className="flex justify-between px-4 sm:px-8 md:px-14 h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 dark:bg-gray-800/40">
             <div className="flex h-[60px] items-center border-b px-6 gap-4">
-                <Link className="flex items-center gap-2 font-semibold" href="/">
+                <Link className="flex items-center gap-2 font-semibold" to="/">
                     <Layers className="h-6 w-6" />
                     <span className="">CrowdFund</span>
                 </Link>
@@ -43,10 +43,10 @@ const NavBar = () => {
 
             {!isLoggedIn() && (
                 <div className="space-x-4">
-                  <Link href="/login">
+                  <Link to="/login">
                     <Button variant="outline">Log in</Button>
                   </Link>
-                  <Link href="/signup">
+                  <Link to="/signup">
                     <Button>Sign up</Button>
                   </Link>
                 </div>

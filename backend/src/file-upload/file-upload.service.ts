@@ -34,7 +34,8 @@ export class FileUploadService {
   }
 
   async deleteFile(fileUrl: string) {
-    const publicId = fileUrl.split('/').pop().split('.')[0];
+    // public id keeps the folder: .../upload/v123/headerImages/abc.jpg -> headerImages/abc
+    const publicId = fileUrl.split('/upload/').pop().replace(/^v\d+\//, '').replace(/\.[^/.]+$/, '');
     const deleteResult = await v2.uploader.destroy(publicId).catch((err) => {
       throw new Error('file delete failed');
     });

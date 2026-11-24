@@ -129,13 +129,13 @@ const CampaignForm = ({
             </div>
             <div className='flex gap-5'>
                 <div className="grid w-full items-center gap-1.5 max-w-[200px]">
-                    <Label className='text-base' htmlFor="goal">Fundraising Goal ($)</Label>
+                    <Label className='text-base' htmlFor="goal">Fundraising Goal (₱)</Label>
                     <Input value={data.goal} onChange={(e) => setData({...data, goal: e.target.valueAsNumber})} 
                     className='w-full max-w-[200px]' type="number" id="goal" placeholder="Money Goal" />
                 </div>
                 <div className='mt-auto'>
                     <Label>Current Money Raised</Label>
-                    <p className="text-xl font-bold">$0.00</p>
+                    <p className="text-xl font-bold">₱0.00</p>
                     <p className="text-xs text-muted-foreground">This will update as donations come in.</p>
                 </div>
                 <div>

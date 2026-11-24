@@ -25,13 +25,13 @@ const AuthContextProvider = ({ children }: any) => {
     const { data: user, isLoading } = useQuery({
         queryKey: ['user'],
         queryFn: async () => {
-            if(!localStorage.getItem('access_token') || !localStorage.getItem("refresh_token")) return
+            if(!localStorage.getItem('access_token') || !localStorage.getItem("refresh_token")) return null
 
             const response = await axiosFetch.get('/auth/checkUser').catch(() => undefined)
 
-            if(!response) return;
+            if(!response) return null;
 
-            return response.data;
+            return response.data ?? null;
         },
         refetchOnWindowFocus: false
     })

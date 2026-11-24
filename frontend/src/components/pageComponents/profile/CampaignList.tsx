@@ -44,8 +44,8 @@ const CampaignList = ({
                                         <div className="space-y-4">
                                             <Progress value={progressPercentage} className="h-2" />
                                             <div className="flex justify-between text-sm font-medium">
-                                                <span>${campaign.current.toLocaleString()} raised</span>
-                                                <span>${campaign.goal.toLocaleString()} goal</span>
+                                                <span>₱{campaign.current.toLocaleString()} raised</span>
+                                                <span>₱{campaign.goal.toLocaleString()} goal</span>
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <span className="text-sm text-gray-600">{daysLeft} days left</span>

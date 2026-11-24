@@ -1,6 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthContext } from '@/context/AuthContext';
+import axiosFetch from '@/lib/axios';
+import { CampaignPost } from '@/types/campaign';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
@@ -24,23 +27,15 @@ function Index() {
     }
   ]
 
-  const featuredCampaigns = [
-    {
-      image: '/successStories/successStories1.jpeg',
-      title: 'Planting Futures: Grow a Greener Tomorrow',
-      description: "Help us restore the planet, one tree at a time. Your contribution will go towards planting trees that provide clean air, habitats for wildlife, and a sustainable future for generations to come."
+  // the newest real campaigns on the platform
+  const { data: featuredCampaigns } = useQuery({
+    queryKey: ['featured-campaigns'],
+    queryFn: async () => {
+      const response = await axiosFetch.get('/campaign/browse-campaigns?search=&filter=')
+      return (response.data as CampaignPost[]).slice(0, 3)
     },
-    {
-      image: '/successStories/successStories2.jpg',
-      title: 'Rebuilding Dreams: Aid for Ukrainian Refugees',
-      description: "Millions of Ukrainians displaced by war are struggling to rebuild their lives in unfamiliar countries. Your support can provide them with resources, job opportunities, and hope for a better future. Donate today to help them find stability and dignity."
-    },
-    {
-      image: '/successStories/successStories3.png',
-      title: 'Race For Life',
-      description: "Real LIFE Foundation is a Philippine Christian nongovernmental organization that seeks to break the cycle of poverty in Filipino homes by providing targeted educational assistance to underserved youth and empowering them through character formation and leadership development."
-    }
-  ] 
+    refetchOnWindowFocus: false
+  })
 
   return (
     <div className="flex flex-col height-withNav">
@@ -65,7 +60,7 @@ function Index() {
                       </Link>
                     </div>
                     <div className="mt-3 sm:mt-0 sm:ml-3">
-                      <Link href={isLoggedIn() ? "/dashboard/overview" : "/login"}>
+                      <Link to={isLoggedIn() ? "/dashboard/Overview" : "/login"}>
                         <Button variant="outline" size="lg" className="w-full">
                           {isLoggedIn() ? "Go to Dashboard" : "Start Fundraising"}
                         </Button>
@@ -87,29 +82,28 @@ function Index() {
           </div>
         </section>
 
-        <section id="featured-campaigns" className="py-12 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              Featured Campaigns
-            </h2>
-            <div className="mt-6 grid gap-16 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-12">
-              {featuredCampaigns.map((item) => (
-                <div key={item.title} className="relative">
-                  <div className="aspect-w-3 aspect-h-2">
-                    <div className="w-full h-full bg-gray-200 rounded-lg overflow-hidden border-4 border-indigo-200">
-                      {/* Placeholder for campaign image */}
-                      <div className="flex items-center justify-center h-full text-gray-500">
-                        <img className='w-full h-full max-w-[375px] max-h-[200px]' src={item.image} /> 
-                      </div>
+        {!!featuredCampaigns?.length && (
+          <section id="featured-campaigns" className="py-12 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Featured Campaigns
+              </h2>
+              <div className="mt-6 grid gap-16 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-12">
+                {featuredCampaigns.map((campaign) => (
+                  <Link key={campaign.id} to="/campaigns/$campaignId" params={{ campaignId: campaign.id }} className="relative">
+                    <div className="w-full h-[200px] bg-gray-200 rounded-lg overflow-hidden border-4 border-indigo-200">
+                      <img className='w-full h-full object-cover' src={campaign.headerImage} alt={campaign.title} />
                     </div>
-                  </div>
-                  <h3 className="mt-4 text-lg font-medium text-gray-900">{item.title}</h3>
-                  <p className="mt-1 text-sm text-gray-500">{item.description}</p>
-                </div>
-              ))}
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">{campaign.title}</h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      ₱{campaign.current.toLocaleString()} raised of ₱{campaign.goal.toLocaleString()}
+                    </p>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <section id="About" className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -220,13 +214,17 @@ function Index() {
       <footer className="bg-gray-800">
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <nav className="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-            {["About", "Browse Donations", "Privacy", "Terms", "Contact"].map((item) => (
-              <div key={item} className="px-5 py-2">
-                <Link href={`/${item.toLowerCase().replace(/\s+/g, '-')}`} className="text-base text-gray-400 hover:text-white">
-                  {item}
-                </Link>
-              </div>
-            ))}
+            <div className="px-5 py-2">
+              <a href="#About" className="text-base text-gray-400 hover:text-white">About</a>
+            </div>
+            <div className="px-5 py-2">
+              <a href="#How-It-Works" className="text-base text-gray-400 hover:text-white">How It Works</a>
+            </div>
+            <div className="px-5 py-2">
+              <Link to="/campaigns/browse" search={{ page: 1, search: '', filter: '' }} className="text-base text-gray-400 hover:text-white">
+                Browse Campaigns
+              </Link>
+            </div>
           </nav>
           <p className="mt-8 text-center text-base text-gray-400">
             &copy; {new Date().getFullYear()} CrowdFund, Inc. All rights reserved.

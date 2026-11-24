@@ -112,13 +112,13 @@ function RouteComponent() {
             <CardContent>
               <Progress value={progress} className="mb-2" />
               <div className="flex justify-between text-sm font-medium mb-4">
-                <span>${campaign.current.toLocaleString()} raised</span>
+                <span>₱{campaign.current.toLocaleString()} raised</span>
                 <span>{progress.toFixed(0)}%</span>
               </div>
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Goal:</span>
-                  <span className="font-medium">${campaign.goal.toLocaleString()}</span>
+                  <span className="font-medium">₱{campaign.goal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Backers:</span>

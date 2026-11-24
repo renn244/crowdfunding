@@ -4,15 +4,13 @@ import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Observable } from 'rxjs';
 
-const jwtSecret = process.env.JWT_SECRET!;
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false, // set this to true if
-      secretOrKey: jwtSecret,
+      secretOrKey: process.env.JWT_SECRET,
     });
   }
 
