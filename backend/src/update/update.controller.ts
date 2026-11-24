@@ -14,11 +14,11 @@ import { RequestUser, User } from 'src/guards/user.decorator';
 import { CreateUpdateDto } from './dto/update.dto';
 import { JwtAuthGuard } from 'src/guards/jwt.authguard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('update')
 export class UpdateController {
   constructor(private readonly updateService: UpdateService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async postUpdate(@Body() body: CreateUpdateDto, @User() user: RequestUser) {
     return this.updateService.postUpdate(body, user);
@@ -30,10 +30,11 @@ export class UpdateController {
   }
 
   @Get(':updateId')
-  async getUpdate(@Param('campaignId') campaignId: string) {
-    return this.updateService.getUpdate(campaignId);
+  async getUpdate(@Param('updateId') updateId: string) {
+    return this.updateService.getUpdate(updateId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':updateId')
   async updateUpdate(
     @Body() body: CreateUpdateDto,
@@ -43,6 +44,7 @@ export class UpdateController {
     return this.updateService.updateUpdate(body, user, updateId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':updateId')
   async deleteUpdate(
     @User() user: RequestUser,

@@ -87,7 +87,7 @@ const Overview = ({
                         <CreditCard className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">₱{data.averageDonation.toFixed(2)}</div>
+                        <div className="text-2xl font-bold">₱{data.averageDonation.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
                     </CardContent>
                 </Card>
             </div>
@@ -121,19 +121,19 @@ const Overview = ({
                     <CardContent className="p-0">
                         <ScrollArea className="h-[490px] px-[24px] pb-[12px]">
                             <div className="space-y-8">
-                                {data.recentDonations.map((donation, index) => (
-                                    <div key={index} className="flex items-center">
+                                {data.recentDonations.map((donation) => (
+                                    <div key={donation.id} className="flex items-center">
                                     <Avatar className="h-9 w-9">
                                         <AvatarImage src={donation.user?.profile} alt="Avatar" />
-                                        <AvatarFallback>{donation.user?.username[0] || 'A'}</AvatarFallback>
+                                        <AvatarFallback>{(donation.user?.username || donation.firstName || 'A')[0]}</AvatarFallback>
                                     </Avatar>
                                     <div className="ml-4 space-y-1">
-                                        <p className="text-sm font-medium leading-none">{donation.user?.username || 'Anonymous'}</p>
+                                        <p className="text-sm font-medium leading-none">{donation.user?.username || `${donation.firstName} ${donation.lastName}`}</p>
                                         <p className="text-sm text-muted-foreground">
-                                        {donation.user?.email || 'No Email'}
+                                        {donation.user?.email || donation.email}
                                         </p>
                                     </div>
-                                        <div className="ml-auto font-medium">₱{donation.amount}</div>
+                                        <div className="ml-auto font-medium">₱{donation.amount.toLocaleString()}</div>
                                     </div>
                                 ))}
                             </div>

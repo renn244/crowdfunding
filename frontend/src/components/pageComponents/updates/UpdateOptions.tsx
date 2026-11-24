@@ -61,7 +61,7 @@ export const DeleteUpdate = ({
                 throw new Error('An error occurred')
             }
             
-            queryClient.setQueryData(['viewAllupdates'], (data: Update[] | undefined) => {
+            queryClient.setQueriesData(['viewAllupdates'], (data: Update[] | undefined) => {
                 return data?.filter((updateData: Update) => updateData.id !== updateId)
             })
 
@@ -126,7 +126,7 @@ export const EditUpdate = ({
                 throw new Error('An error occurred')
             }
             
-            queryClient.setQueryData(['viewAllupdates'], (data: Update[] | undefined) => {
+            queryClient.setQueriesData(['viewAllupdates'], (data: Update[] | undefined) => {
                 return data?.map((update: Update) => {
                     if(update.id === updateId) {
                         return response.data

@@ -151,7 +151,7 @@ const CampaignForm = ({
             <Tiptap body={data.body} onChange={(value) => setData({...data, body: value})} />
             <div className='w-full flex justify-center items-center'>
                 <Button onClick={() => mutate()} disabled={isLoading} className='w-full max-w-[350px]'>
-                    {isLoading ? <LoadingSpinner /> : "Create Campaign"}
+                    {isLoading ? <LoadingSpinner /> : isUpdate ? "Save Changes" : "Create Campaign"}
                 </Button>
             </div>
         </div>

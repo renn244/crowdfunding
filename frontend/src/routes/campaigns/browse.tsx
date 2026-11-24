@@ -34,8 +34,9 @@ export const Route = createFileRoute('/campaigns/browse')({
 })
 
 function SearchInput() {
-  const [searchInput, setSearchInput] = useState('')
-  const [filter, setFilter] = useState('')
+  const initial = Route.useSearch()
+  const [searchInput, setSearchInput] = useState(initial.search ?? '')
+  const [filter, setFilter] = useState(initial.filter ?? '')
   const debounceValue = useDebounce(searchInput, 500)
   const navigate = useNavigate({ from: '/campaigns/browse' })
 

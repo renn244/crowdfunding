@@ -26,23 +26,28 @@ axiosFetch.interceptors.request.use((config) => {
     return Promise.reject(error)
 })
 
+// every refresh deletes the old refresh token, so requests that 401 together share one refresh
+let refreshing: Promise<void> | null = null
+
+const refreshTokens = async () => {
+    const response = await axiosFetch.post('/auth/refreshToken', {
+        refreshToken: localStorage.getItem('refresh_token')
+    })
+
+    localStorage.setItem('access_token', response.data.access_token);
+    localStorage.setItem('refresh_token', response.data.refresh_token);
+}
+
 axiosFetch.interceptors.response.use((response) => {
     return response
 }, async(error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/refreshToken')) {
         originalRequest._retry = true;
-        const refresh_token = localStorage.getItem('refresh_token');
 
-        const response = await axiosFetch.post('/auth/refreshToken', {
-            refreshToken: refresh_token
-        })
-
-        localStorage.setItem('access_token', response.data.access_token);
-        localStorage.setItem('refresh_token', response.data.refresh_token);
-
-        axiosFetch.defaults.headers.common['Authorization'] = `Bearer ${response.data.access_token}`
+        refreshing ??= refreshTokens().finally(() => { refreshing = null })
+        await refreshing
 
         return axiosFetch(originalRequest);
     }

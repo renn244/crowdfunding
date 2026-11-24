@@ -22,7 +22,7 @@ const ViewAllUpdates = ({
 
     const { user: currentUser } = useAuthContext()
     const { data: Updates } = useQuery({
-        queryKey: ['viewAllupdates'],
+        queryKey: ['viewAllupdates', campaignId],
         queryFn: async () => {
             const response = await axiosFetch.get(`/update/getUpdates?campaignId=${campaignId}`)
    
@@ -53,7 +53,7 @@ const ViewAllUpdates = ({
                 <ScrollArea className="h-[800px] ">
                     <div>
                         {Updates ? Updates?.map((update) => (
-                            <Card className="mb-4 max-w-[500px]">
+                            <Card key={update.id} className="mb-4 max-w-[500px]">
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <div className="flex gap-4 items-center">
                                         <Avatar>

@@ -11,6 +11,9 @@ export type Donation = {
 
     message?: string;
     paymentId?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
     createdAt: string;
     updatedAt: string;
 }

@@ -37,11 +37,11 @@ export const DonationStastistics = memo(() => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <h3 className="text-xl font-semibold mb-2">Total Donations</h3>
-                        <p className="text-4xl font-bold">₱{data?.totalDonations ?? 0}</p>
+                        <p className="text-4xl font-bold">₱{(data?.totalDonations ?? 0).toLocaleString()}</p>
                     </div>
                     <div>
                         <h3 className="text-xl font-semibold mb-2">Average Donation</h3>
-                        <p className="text-4xl font-bold">₱{(data?.averageDonation ?? 0).toFixed(2)}</p>
+                        <p className="text-4xl font-bold">₱{(data?.averageDonation ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                     </div>
                     <div>
                         <h3 className="text-xl font-semibold mb-2">Total Donors</h3>
@@ -126,12 +126,12 @@ const Donations = ({
                             <div className="flex items-center">
                                 <Avatar className="h-10 w-10 mr-3">
                                     <AvatarImage src={donation.user?.profile || ''} />
-                                    <AvatarFallback>{donation.user?.username[0] || 'A'}</AvatarFallback>
+                                    <AvatarFallback>{(donation.user?.username || donation.firstName || 'A')[0]}</AvatarFallback>
                                 </Avatar>
-                                {donation.user?.username || 'Anonymous'}
+                                {donation.user?.username || `${donation.firstName} ${donation.lastName}`}
                             </div>
                             </TableCell>
-                            <TableCell className="text-base">₱{donation.amount}</TableCell>
+                            <TableCell className="text-base">₱{donation.amount.toLocaleString()}</TableCell>
                             <TableCell className="text-base">{donation.post?.title}</TableCell>
                             <TableCell className="text-base">{format(new Date(donation.createdAt), 'yyyy-MM-dd')}</TableCell>
                             <TableCell className="text-base">

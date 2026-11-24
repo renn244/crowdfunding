@@ -135,7 +135,7 @@ export class DonationService {
     const createNotif = await this.inboxService.createNotification({
       userId: donationData.post.userId,
       title: 'New Donation',
-      message: `You have received a new donation of $${getPayment.attributes.amount / 100} from ${getPayment.attributes.metadata.firstName} ${getPayment.attributes.metadata.lastName}`,
+      message: `You have received a new donation of ₱${getPayment.attributes.amount / 100} from ${getPayment.attributes.metadata.firstName} ${getPayment.attributes.metadata.lastName}`,
       type: 'PUSH',
     })
 
@@ -197,7 +197,7 @@ export class DonationService {
     const createNotif = await this.inboxService.createNotification({
       userId: donationData.post.userId,
       title: 'New Donation',
-      message: `You have received a new donation of $${getSession.amount_total / 100} from ${getSession.metadata.firstName} ${getSession.metadata.lastName}`,
+      message: `You have received a new donation of ₱${getSession.amount_total / 100} from ${getSession.metadata.firstName} ${getSession.metadata.lastName}`,
       type: 'PUSH',
     })
 
@@ -274,6 +274,8 @@ export class DonationService {
                     },
                   },
                 },
+                { firstName: { contains: search, mode: 'insensitive' } },
+                { lastName: { contains: search, mode: 'insensitive' } },
               ],
             },
           ],
@@ -293,6 +295,7 @@ export class DonationService {
             },
           },
         },
+        orderBy: { createdAt: 'desc' },
         skip,
         take,
       });

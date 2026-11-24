@@ -43,17 +43,22 @@ export class UpdateService {
       where: {
         postId: campaignId,
       },
+      orderBy: { createdAt: 'desc' },
     });
 
     return getUpdates;
   }
 
-  async getUpdate(campaignId: string) {
-    const getUpdate = await this.prisma.update.findFirst({
+  async getUpdate(updateId: string) {
+    const getUpdate = await this.prisma.update.findUnique({
       where: {
-        postId: campaignId,
+        id: updateId,
       },
     });
+
+    if (!getUpdate) {
+      throw new NotFoundException('Update not found');
+    }
 
     return getUpdate;
   }
