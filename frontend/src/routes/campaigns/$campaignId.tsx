@@ -67,7 +67,8 @@ function RouteComponent() {
     )
   }
 
-  const content = readMore ? campaign.body : campaign.body.substring(0, 700) + '...'
+  const isLong = campaign.body.length > 700
+  const content = readMore || !isLong ? campaign.body : campaign.body.substring(0, 700) + '...'
   const date = campaign.endDate && differenceInCalendarDays(new Date(campaign.endDate), new Date())
   const endDateText = date ? (date < 0 ? 'Ended' : `${date} days left`) : 'No EndDate'
   const progress = (campaign.current / campaign.goal) * 100
@@ -79,11 +80,13 @@ function RouteComponent() {
         <div className="lg:col-span-2">
           <h1 className="text-4xl font-bold mb-7">{campaign.title}</h1>
           <img src={campaign.headerImage} alt={campaign.title} className="w-full h-[400px] object-cover rounded-lg mb-6" />
-          <div className={`tiptap ProseMirror relative ${!readMore ? 'after:absolute after:bottom-0  after:block after:w-full after:h-5 after:bg-gradient-to-b after:from-transparent after:to-white' : ''}`} 
+          <div className={`tiptap ProseMirror relative ${!readMore && isLong ? 'after:absolute after:bottom-0  after:block after:w-full after:h-5 after:bg-gradient-to-b after:from-transparent after:to-white' : ''}`} 
           dangerouslySetInnerHTML={{ __html: content }} />
-          <button onClick={() => setReadMore(!readMore)} className="text-primary-600 mt-4 underline-offset-4 underline">
-            {readMore ? 'Read Less' : 'Read More'}
-          </button>
+          {isLong && (
+            <button onClick={() => setReadMore(!readMore)} className="text-primary-600 mt-4 underline-offset-4 underline">
+              {readMore ? 'Read Less' : 'Read More'}
+            </button>
+          )}
 
           <div aria-label='recent-update' className='mt-7'>
             <Separator className="h-[2px]" />

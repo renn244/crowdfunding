@@ -88,7 +88,7 @@ async function main() {
       data: {
         userId: user.id,
         title: c.title,
-        body: c.body,
+        body: `<p>${c.body}</p><p><em>Demo data: this campaign, its organizer and its donations are made up for this portfolio project.</em></p>`,
         category: c.category,
         goal: c.goal,
         current: c.gifts.reduce((sum, amount) => sum + amount, 0),
