@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { enUS } from 'date-fns/locale';
 import { CampaignService } from 'src/campaign/campaign.service';
 import { EmailSenderService } from 'src/email-sender/email-sender.service';
@@ -12,6 +12,8 @@ import { Month } from 'date-fns/types';
 
 @Injectable()
 export class DonationService {
+  private readonly logger = new Logger(DonationService.name);
+
   constructor(
     private readonly paymentService: PaymentService,
     private readonly campaignService: CampaignService,
@@ -67,181 +69,87 @@ export class DonationService {
     };
   }
 
-  async createDonationdata(billingInformation: any, campaignId: string, amount: number, userId: string, paymentId: string) {
-    const donationData = await this.prisma.donation.create({
-      data: {
-        amount: amount,
-        paymentId: paymentId,
-        message: '',
-        postId: campaignId,
-        userId: userId || null,
-        // billing Information
-        firstName: billingInformation.firstName,
-        lastName: billingInformation.lastName,
-        email: billingInformation.email,
-        address: billingInformation.address,
-        city: billingInformation.city,
-        postalCode: billingInformation.postalCode,
-        country: billingInformation.country,
-      },
-      include: {
-        post: {
-          select: {
-            id: true,
-            headerImage: true,
-            userId: true
-          },
-        }
-      }
-    });
+  // saves a paid donation once; the donation and the campaign total change together,
+  // and the email and notification can fail without losing the donation
+  async recordDonation(billing: any, campaignId: string, amount: number, userId: string | undefined, paymentId: string) {
+    const existing = await this.prisma.donation.findFirst({ where: { paymentId } });
+    if (existing) {
+      return { success: true, message: 'Donation already exist', donation: existing };
+    }
 
-    return donationData;
+    const [donation] = await this.prisma.$transaction([
+      this.prisma.donation.create({
+        data: {
+          amount,
+          paymentId,
+          message: '',
+          postId: campaignId,
+          userId: userId || null,
+          firstName: billing.firstName,
+          lastName: billing.lastName,
+          email: billing.email,
+          address: billing.address,
+          city: billing.city,
+          postalCode: billing.postalCode,
+          country: billing.country,
+        },
+        include: { post: { select: { id: true, headerImage: true, userId: true } } },
+      }),
+      this.prisma.campaignPost.update({
+        where: { id: campaignId },
+        data: { current: { increment: amount }, totalDonors: { increment: 1 } },
+      }),
+    ]);
+
+    await this.emailSender.sendDonationEmail(billing.email, billing.firstName, amount * 100, donation.post.headerImage)
+      .catch(() => this.logger.warn(`Donation email failed for ${donation.id}`));
+    await this.inboxService.createNotification({
+      userId: donation.post.userId,
+      title: 'New Donation',
+      message: `You have received a new donation of ₱${amount} from ${billing.firstName} ${billing.lastName}`,
+      type: 'PUSH',
+    }).catch(() => this.logger.warn(`Donation notification failed for ${donation.id}`));
+
+    return { success: true, donation };
   }
 
   async handleCheckPaymongoDonations(userId: string | undefined, paymentId: string) {
-    const getPayment = await this.paymentService.retrievePaymentIntent(paymentId);
-
-    if (getPayment.attributes.status !== 'succeeded') {
-      return {
-        success: false,
-        message: 'Payment intent not yet succeeded',
-      };
+    const payment = await this.paymentService.retrievePaymentIntent(paymentId);
+    if (payment.attributes.status !== 'succeeded') {
+      return { success: false, message: 'Payment intent not yet succeeded' };
     }
 
-    // check if donation exist already
-    const checkDonation = await this.prisma.donation.findFirst({
-      where: {
-        paymentId: paymentId,
-      },
-    });
-
-    if (checkDonation) {
-      return {
-        success: true,
-        message: 'Donation already exist',
-        donation: checkDonation,
-      };
-    }
-
-    // if it is payed saved to database
-    const donationData = await this.createDonationdata(
-      getPayment.attributes.metadata, getPayment.attributes.metadata.campaignId, getPayment.attributes.amount / 100, userId, paymentId);
-    
-    // send email
-    await this.emailSender.sendDonationEmail(getPayment.attributes.metadata.email, getPayment.attributes.metadata.firstName,
-      getPayment.attributes.amount, donationData.post.headerImage)
-    
-    // send notif to campaign owner
-    const createNotif = await this.inboxService.createNotification({
-      userId: donationData.post.userId,
-      title: 'New Donation',
-      message: `You have received a new donation of ₱${getPayment.attributes.amount / 100} from ${getPayment.attributes.metadata.firstName} ${getPayment.attributes.metadata.lastName}`,
-      type: 'PUSH',
-    })
-
-    // updating the number of donors
-    const updateCampaign = await this.prisma.campaignPost.update({
-      where: {
-        id: getPayment.attributes.metadata.campaignId,
-      },
-      data: {
-        current: {
-          increment: getPayment.attributes.amount / 100,
-        },
-        totalDonors: {
-          increment: 1,
-        },
-      },
-    });
-
-    return {
-      success: true,
-      donation: donationData,
-    };
+    const billing = payment.attributes.metadata;
+    return this.recordDonation(billing, billing.campaignId, payment.attributes.amount / 100, userId, paymentId);
   }
 
   async handleCheckStripeDonations(userId: string | undefined, sessionId: string) {
-    const getSession = await this.stripeService.retrievePaymentSession(sessionId);
-
-    if(getSession.payment_status !== 'paid') {
-      return {
-        success: false,
-        message: 'Payment intent not yet succeeded',
-      };
+    const session = await this.stripeService.retrievePaymentSession(sessionId);
+    if (session.payment_status !== 'paid') {
+      return { success: false, message: 'Payment intent not yet succeeded' };
     }
 
-    // check if donation exist already
-    const checkDonation = await this.prisma.donation.findFirst({
-      where: {
-        paymentId: sessionId,
-      },
-    });
+    return this.recordDonation(session.metadata, session.metadata.campaignId, session.amount_total / 100, userId, sessionId);
+  }
 
-    if (checkDonation) {
-      return {
-        success: true,
-        message: 'Donation already exist',
-        donation: checkDonation,
-      };
+  async checkDonations(userId: string | undefined, { paymentId, type }) {
+    if (type !== 'paymongo' && type !== 'stripe') {
+      throw new BadRequestException('Invalid payment type');
     }
 
-    // if it is payed saved to database
-    const donationData = await this.createDonationdata(
-      getSession.metadata, getSession.metadata.campaignId, getSession.amount_total / 100, userId, sessionId);
-    
-    // send email
-    await this.emailSender.sendDonationEmail(getSession.metadata.email, getSession.metadata.firstName,
-      getSession.amount_total, donationData.post.headerImage)
-    
-    // send notif to campaign owner
-    const createNotif = await this.inboxService.createNotification({
-      userId: donationData.post.userId,
-      title: 'New Donation',
-      message: `You have received a new donation of ₱${getSession.amount_total / 100} from ${getSession.metadata.firstName} ${getSession.metadata.lastName}`,
-      type: 'PUSH',
-    })
+    const result = type === 'paymongo'
+      ? await this.handleCheckPaymongoDonations(userId, paymentId)
+      : await this.handleCheckStripeDonations(userId, paymentId);
 
-    // updating the number of donors
-    const updateCampaign = await this.prisma.campaignPost.update({
-      where: {
-        id: getSession.metadata.campaignId,
-      },
-      data: {
-        current: {
-          increment: getSession.amount_total / 100,
-        },
-        totalDonors: {
-          increment: 1,
-        },
-      },
-    });
+    if (!('donation' in result)) {
+      return { success: false, message: result.message };
+    }
 
     return {
       success: true,
-      donation: donationData,
+      donation: result.donation,
+      redirectUrl: `${process.env.CLIENT_BASE_URL}/campaigns/${result.donation.postId}`,
     };
-  }
-
-  async checkDonations(userId: string | undefined, {paymentId,  type}) {
-    if(type === 'paymongo') {
-      const paymongoProcess = await this.handleCheckPaymongoDonations(userId, paymentId);
-      
-      return {
-        success: true,
-        donation: paymongoProcess.donation,
-        redirectUrl: `${process.env.CLIENT_BASE_URL}/campaigns/${paymongoProcess.donation.postId}`, // put to campaign page
-      }
-    } else if(type === 'stripe') {
-      const stripeProcess = await this.handleCheckStripeDonations(userId, paymentId);
-
-      return {
-        success: true,
-        donation: stripeProcess.donation,
-        redirectUrl: `${process.env.CLIENT_BASE_URL}/campaigns/${stripeProcess.donation.postId}`, // put to campaign page
-      }
-    } else {
-      throw new BadRequestException('Invalid payment type');
-    }
   }
 
   async checkMyDonations(user: RequestUser, search: string, page: number) {

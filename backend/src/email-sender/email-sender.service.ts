@@ -127,7 +127,7 @@ export class EmailSenderService {
                 'Donation ',
                 `Thankyou for Donation! ${name}`,
                  `
-                  Thank you for your $${amount / 100} donation! 
+                  Thank you for your ₱${amount / 100} donation!
                   Your support is making a real difference and helps us continue our mission. 
                   We truly appreciate your contribution and commitment to creating positive change.
                 `,
