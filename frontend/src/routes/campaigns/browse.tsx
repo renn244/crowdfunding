@@ -145,18 +145,19 @@ function RouteComponent() {
           const endDateText = date ? (date < 0 ? 'Ended' : `${date} days left`) : 'No EndDate'
 
           return (
-            <Link reloadDocument to={`/campaigns/${campaign.id}`} key={campaign.id}>
-              <Card key={campaign.id} className="flex flex-col ">
+            <Link reloadDocument to={`/campaigns/${campaign.id}`} key={campaign.id} className="h-full">
+              <Card key={campaign.id} className="flex flex-col h-full">
                 <img src={campaign.headerImage} alt={campaign.title} className="h-48 w-full object-cover rounded-t-lg" />
                 <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-xl">{campaign.title}</CardTitle>
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="min-w-0">
+                      {/* two lines reserved so every card's progress bar lines up */}
+                      <CardTitle className="text-xl line-clamp-2 min-h-[3.5rem]" title={campaign.title}>{campaign.title}</CardTitle>
                       <CardDescription className="text-sm text-muted-foreground mt-1">
                         by {campaign.user.username}
                       </CardDescription>
                     </div>
-                    {campaign.category && <Badge className='mt-1'>{campaign.category}</Badge>}
+                    {campaign.category && <Badge className='mt-1 shrink-0'>{campaign.category}</Badge>}
                   </div>
                 </CardHeader>
                 <CardContent className="flex-grow">
@@ -167,7 +168,7 @@ function RouteComponent() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground whitespace-nowrap">
                     <span>{campaign.totalDonors} backers</span>
                     <span>•</span>
                     <span>{endDateText}</span>
