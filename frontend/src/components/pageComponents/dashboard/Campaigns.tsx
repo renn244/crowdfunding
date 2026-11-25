@@ -21,6 +21,20 @@ const Campaigns = ({
 }: CampaignsProps) => {
  
     
+    if (campaignData.length === 0) {
+        return (
+            <Card>
+                <CardContent className="flex flex-col items-center justify-center gap-4 py-12 text-center">
+                    <p className="text-xl font-semibold text-gray-600">No campaigns yet</p>
+                    <p className="text-muted-foreground">Start your first fundraiser and it will show up here.</p>
+                    <Link to="/campaigns/create">
+                        <Button>Create Campaign</Button>
+                    </Link>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {campaignData.map((campaign, index) => (

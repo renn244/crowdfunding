@@ -37,7 +37,7 @@ function RouteComponent() {
         <div className='height-withNav pt-10'>
             <header className='flex items-center'>
             </header>
-            <div className='max-w-[800px] mx-auto'>
+            <div className='max-w-[800px] mx-auto px-4'>
                 <CardTitle className=''>
                     Create New Campaign
                 </CardTitle>

@@ -104,13 +104,13 @@ const CampaignForm = ({
                 ) : null}
                 <Input onChange={(e) => handleImageChange(e)} type='file' />
             </div>
-            <div className='flex gap-5'>
+            <div className='flex flex-col sm:flex-row gap-5'>
                 <div className="grid w-full items-center gap-1.5">
                     <Label className='text-base' htmlFor="title">Title</Label>
                     <Input value={data.title} onChange={(e) => setData({...data, title: e.target.value})} 
                     className='w-full max-w-[800px]' type="text" id="title" placeholder="Title...." />
                 </div>
-                <div className='grid w-[175px] items-center gap-1.5'>
+                <div className='grid w-full sm:w-[175px] items-center gap-1.5'>
                     <Label className='text-base' htmlFor="category">Category</Label>
                     <Select value={data.category} onValueChange={(value) => setData({...data, category: value as CampaignCategoryType})}>
                         <SelectTrigger>
@@ -119,7 +119,7 @@ const CampaignForm = ({
                         <SelectContent>
                             {['MEDICAL', 'EDUCATION', 'ENVIRONMENT', 'ANIMALS', 'DISASTER', 'BUSINESS', 'OTHER']
                             .map((category) => (
-                                <SelectItem className='first-letter:uppercase' value={category}>
+                                <SelectItem key={category} className='first-letter:uppercase' value={category}>
                                     {category.toLowerCase()}
                                 </SelectItem>
                             ))}
@@ -127,10 +127,11 @@ const CampaignForm = ({
                     </Select>
                 </div>
             </div>
-            <div className='flex gap-5'>
+            <div className='flex flex-wrap gap-5'>
                 <div className="grid w-full items-center gap-1.5 max-w-[200px]">
                     <Label className='text-base' htmlFor="goal">Fundraising Goal (₱)</Label>
-                    <Input value={data.goal} onChange={(e) => setData({...data, goal: e.target.valueAsNumber})} 
+                    {/* empty instead of 0 so typing doesn't give "01000" */}
+                    <Input value={data.goal || ''} onChange={(e) => setData({...data, goal: e.target.valueAsNumber || 0})}
                     className='w-full max-w-[200px]' type="number" id="goal" placeholder="Money Goal" />
                 </div>
                 <div className='mt-auto'>

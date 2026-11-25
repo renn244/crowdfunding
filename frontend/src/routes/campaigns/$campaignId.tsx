@@ -74,7 +74,7 @@ function RouteComponent() {
   const progress = (campaign.current / campaign.goal) * 100
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto px-4 py-10">
       <OpenGraph title={campaign.title} image={campaign.headerImage} url={`${import.meta.env.VITE_BASE_URL}/campaigns/${campaign.id}`} />
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">

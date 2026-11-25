@@ -47,7 +47,7 @@ function RouteComponent() {
   return (
     <div className="height-withNav pt-10">
       <header className="flex items-center"></header>
-      <div className="max-w-[800px] mx-auto">
+      <div className="max-w-[800px] mx-auto px-4">
         <CardTitle className="">Update Campaign</CardTitle>
         <CardDescription>
           Change what you want to change in the campaign information.
