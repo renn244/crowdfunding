@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 @Injectable()
 export class EmailSenderService {
-    // sends through Brevo's transactional email API
     async sendEmail(to: string, subject: string, title: string, content: string, img?: string) {
         const html = `
                 <!DOCTYPE html>
@@ -102,18 +101,19 @@ export class EmailSenderService {
                 </html>
             `
 
-        if (!process.env.BREVO_API_KEY) {
-            throw new InternalServerErrorException('BREVO_API_KEY is not defined');
+        if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+            throw new InternalServerErrorException('RESEND_API_KEY and EMAIL_FROM must be defined');
         }
 
-        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+        // Render's free tier blocks SMTP, so this goes through Resend's API
+        const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
-            headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
+            headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'content-type': 'application/json' },
             body: JSON.stringify({
-                sender: { name: 'CrowdFund', email: 'renatodsantosjr9@gmail.com' },
-                to: [{ email: to }],
+                from: `CrowdFund <${process.env.EMAIL_FROM}>`,
+                to: [to],
                 subject: subject,
-                htmlContent: html,
+                html: html,
             }),
         });
 
