@@ -1,18 +1,10 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import * as sgMail from '@sendgrid/mail';
 
 @Injectable()
 export class EmailSenderService {
-    constructor() {
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    }
-
+    // sends through Brevo's transactional email API
     async sendEmail(to: string, subject: string, title: string, content: string, img?: string) {
-        const msg = {
-            to: to,
-            from: 'renatodsantosjr9@gmail.com',
-            subject: subject,
-            html: `
+        const html = `
                 <!DOCTYPE html>
                 <html lang="en">
                 <head>
@@ -109,15 +101,28 @@ export class EmailSenderService {
                     </body>
                 </html>
             `
+
+        if (!process.env.BREVO_API_KEY) {
+            throw new InternalServerErrorException('BREVO_API_KEY is not defined');
         }
 
-        try {
-            const response = await sgMail.send(msg);
-            return response
-        } catch (error) {
-            console.log(`Error sending email: ${error}`);
+        const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+            method: 'POST',
+            headers: { 'api-key': process.env.BREVO_API_KEY, 'content-type': 'application/json', accept: 'application/json' },
+            body: JSON.stringify({
+                sender: { name: 'CrowdFund', email: 'renatodsantosjr9@gmail.com' },
+                to: [{ email: to }],
+                subject: subject,
+                htmlContent: html,
+            }),
+        });
+
+        if (!response.ok) {
+            console.log(`Error sending email: ${response.status} ${await response.text()}`);
             throw new InternalServerErrorException('Error sending email');
         }
+
+        return response.json();
     }
 
     async sendDonationEmail(to: string, name: string, amount: number, img?: string) {
